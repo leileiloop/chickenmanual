@@ -11,28 +11,59 @@
       margin: 0;
       font-family: Arial, sans-serif;
       display: flex;
-      flex-wrap: wrap;
+      align-items: center;
       justify-content: center;
-      padding: 20px;
-      gap: 20px;
+      height: 100vh;
+      overflow: hidden;
     }
-
     .image-container {
       width: 100vw;
       height: 100vh;
-      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-
     .image-container img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: opacity 0.3s ease, transform 0.3s ease;
+      transition: opacity 0.3s ease;
     }
+    .nextFloating {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.5);
+      border: none;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      backdrop-filter: blur(6px);
+    }
+  </style>
+</head>
+<body>
+  <div class="image-container">
+    <img id="slideshow" src="1.png" alt="slideshow">
+  </div>
   <button id="nextBtn" class="nextFloating">Next ➜</button>
+  <script>
+    const images = ["1.png","2.png","3.png","4.png","5.png","6.png","7.png","8.png"]; 
+    let index = 0;
+    const slideshow = document.getElementById('slideshow');
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      slideshow.style.opacity = 0;
+      setTimeout(() => {
+        index = (index + 1) % images.length;
+        slideshow.src = images[index];
+        slideshow.style.opacity = 1;
+      }, 250);
+    });
+  </script>
+</body>
+</html> id="nextBtn" class="nextFloating">Next ➜</button>
 
   <script>
     const images = ["1.png","2.png","3.png","4.png","5.png","6.png","7.png","8.png"]; 
