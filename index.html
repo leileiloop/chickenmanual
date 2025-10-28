@@ -83,6 +83,33 @@
   <script src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <script>
+    let currentSlide = 1;
+    const totalSlides = 8;
+    const imgEl = document.getElementById('slideshow');
+    const counterEl = document.getElementById('counter');
+    const nextBtn = document.getElementById('nextBtn');
+    const modelModal = document.getElementById('modelModal');
+    const glbViewer = document.getElementById('glbViewer');
+    const close3D = document.getElementById('close3D');
+
+    nextBtn.addEventListener('click', () => {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        imgEl.src = `${currentSlide}.png`;
+        counterEl.textContent = `${currentSlide} / ${totalSlides}`;
+      } else {
+        modelModal.style.display = 'flex';
+        if (!glbViewer.src) glbViewer.src = '9.glb';
+      }
+    });
+
+    close3D.addEventListener('click', () => {
+      modelModal.style.display = 'none';
+      currentSlide = 1;
+      imgEl.src = `1.png`;
+      counterEl.textContent = `1 / ${totalSlides}`;
+    });
+
     const images=['1.png','2.png','3.png','4.png','5.png','6.png','7.png','8.png'];
     let index=0;
     const slideshow=document.getElementById('slideshow');
