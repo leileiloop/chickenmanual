@@ -2,145 +2,219 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Gallery - Slideshow</title>
   <style>
-    :root{--btn-bg:rgba(0,0,0,0.5);--btn-hover:rgba(255,255,255,0.12)}
-    html,body{height:100%;}
-    body {
-      background-color: #111;
-      color: #fff;
+    :root {
+      --btn-bg: rgba(0, 0, 0, 0.5);
+      --btn-hover: rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
       margin: 0;
+      padding: 0;
+      background: #000;
+      color: #fff;
       font-family: Arial, sans-serif;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      overflow: hidden;
     }
 
     /* Loader styles */
-    #loader{
-      position:fixed;
-      inset:0;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      background:#000;
-      z-index:20;
+    #loader {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      z-index: 20;
+      transition: opacity 0.6s ease;
     }
-    #loader img{width:220px;height:auto;display:block}
-    #loader p{color:#fff;margin-top:16px;font-size:1.1rem}
+    #loader img {
+      width: 200px;
+      max-width: 60vw;
+      height: auto;
+    }
+    #loader p {
+      color: #fff;
+      margin-top: 16px;
+      font-size: 1.1rem;
+      text-align: center;
+    }
 
     /* Slideshow container */
-    #content{display:none;position:relative;width:100vw;height:100vh}
-    .image-container{
-      width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;
+    #content {
+      display: none;
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
     }
-    .image-container img{
-      width:100%;height:100%;object-fit:cover;transition:opacity 0.35s ease,transform 0.35s ease;opacity:1;
+    .image-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+    .image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      opacity: 1;
     }
 
     /* Floating next button */
-    .nextFloating{
-      position:absolute;right:24px;bottom:24px;background:var(--btn-bg);border:none;color:#fff;padding:10px 16px;border-radius:10px;cursor:pointer;font-size:1rem;backdrop-filter:blur(6px);transition:background 0.18s ease,transform 0.12s ease;z-index:30
+    .nextFloating {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      background: var(--btn-bg);
+      border: none;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      backdrop-filter: blur(6px);
+      transition: background 0.18s ease, transform 0.12s ease;
+      z-index: 30;
     }
-    .nextFloating:hover{background:var(--btn-hover);transform:translateY(-2px)}
 
-    /* Minimal accessibility focus */
-    .nextFloating:focus{outline:2px solid rgba(255,255,255,0.15)}
+    .nextFloating:hover {
+      background: var(--btn-hover);
+      transform: translateY(-2px);
+    }
 
-    /* Small slide counter */
-    .counter{position:absolute;left:24px;bottom:28px;background:rgba(0,0,0,0.35);padding:6px 10px;border-radius:8px;font-size:0.95rem}
+    .nextFloating:focus {
+      outline: 2px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Slide counter */
+    .counter {
+      position: absolute;
+      left: 20px;
+      bottom: 24px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      z-index: 25;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 768px) {
+      #loader img {
+        width: 150px;
+      }
+      #loader p {
+        font-size: 1rem;
+      }
+      .nextFloating {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+        bottom: 16px;
+        right: 16px;
+      }
+      .counter {
+        bottom: 20px;
+        left: 16px;
+        font-size: 0.85rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Loader (shows first) -->
+  <!-- Loader -->
   <div id="loader">
-    <img src="g.gif" alt="Loading Chicken"/>
+    <img src="g.gif" alt="Loading Chicken" />
     <p>please wait 🐓</p>
   </div>
 
-  <!-- Main content (hidden until loader finishes) -->
+  <!-- Slideshow -->
   <div id="content" aria-hidden="true">
     <div class="image-container">
-      <img id="slideshow" src="1.png" alt="slideshow image">
+      <img id="slideshow" src="1.png" alt="slideshow image" />
     </div>
     <div class="counter" id="counter">1 / 8</div>
     <button id="nextBtn" class="nextFloating" aria-label="Next slide">Next ➜</button>
-
-    <!-- 3D Modal -->
-    <div id="modelModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:40;align-items:center;justify-content:center;">
-      <div style="position:relative;width:90vw;height:80vh;background:#000;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;">
-        <button id="close3D" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);border:none;color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer;z-index:50">✕</button>
-        <model-viewer id="glbViewer" src="9.glb" alt="3D Model" camera-controls auto-rotate style="width:100%;height:100%;background:#000;"></model-viewer>
-        <button id="next3D" style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.6);border:none;color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer;z-index:50">Next ➜</button>
-      </div>
-    </div>
   </div>
 
-  <script src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-
   <script>
-    let currentSlide = 1;
-    const totalSlides = 8;
-    const imgEl = document.getElementById('slideshow');
-    const counterEl = document.getElementById('counter');
-    const nextBtn = document.getElementById('nextBtn');
-    const modelModal = document.getElementById('modelModal');
-    const glbViewer = document.getElementById('glbViewer');
-    const close3D = document.getElementById('close3D');
+    // Loader transition
+    window.addEventListener("load", () => {
+      const LOADER_MS = 3000; // 3 seconds
+      setTimeout(() => {
+        const loader = document.getElementById("loader");
+        const content = document.getElementById("content");
+        if (loader) {
+          loader.style.opacity = "0";
+          setTimeout(() => loader.remove(), 600);
+        }
+        if (content) {
+          content.style.display = "block";
+          content.setAttribute("aria-hidden", "false");
+        }
+      }, LOADER_MS);
+    });
 
-    nextBtn.addEventListener('click', () => {
-      if (currentSlide < totalSlides) {
-        currentSlide++;
-        imgEl.src = `${currentSlide}.png`;
-        counterEl.textContent = `${currentSlide} / ${totalSlides}`;
-      } else {
-        modelModal.style.display = 'flex';
-        if (!glbViewer.src) glbViewer.src = '9.glb';
+    // Slideshow logic
+    (function () {
+      const images = ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png"];
+      let index = 0;
+      const slideshow = document.getElementById("slideshow");
+      const nextBtn = document.getElementById("nextBtn");
+      const counter = document.getElementById("counter");
+
+      function updateCounter() {
+        counter.textContent = `${index + 1} / ${images.length}`;
       }
-    });
 
-    close3D.addEventListener('click', () => {
-      modelModal.style.display = 'none';
-      currentSlide = 1;
-      imgEl.src = `1.png`;
-      counterEl.textContent = `1 / ${totalSlides}`;
-    });
+      function showImage(i) {
+        slideshow.style.opacity = "0";
+        slideshow.style.transform = "scale(1.02)";
+        setTimeout(() => {
+          slideshow.src = images[i];
+          slideshow.style.transform = "scale(1)";
+          slideshow.style.opacity = "1";
+          updateCounter();
+        }, 200);
+      }
 
-    const images=['1.png','2.png','3.png','4.png','5.png','6.png','7.png','8.png'];
-    let index=0;
-    const slideshow=document.getElementById('slideshow');
-    const nextBtn=document.getElementById('nextBtn');
-    const counter=document.getElementById('counter');
-    const modelModal=document.getElementById('modelModal');
-    const close3D=document.getElementById('close3D');
-    const glbViewer=document.getElementById('glbViewer');
+      nextBtn.addEventListener("click", () => {
+        index = (index + 1) % images.length;
+        showImage(index);
+      });
 
-    window.addEventListener('load',()=>{
-      setTimeout(()=>{document.getElementById('loader').style.display='none';document.getElementById('content').style.display='block';},3000);
-    });
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+          index = (index + 1) % images.length;
+          showImage(index);
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+          index = (index - 1 + images.length) % images.length;
+          showImage(index);
+        }
+      });
 
-    function updateCounter(){counter.textContent=(index+1)+' / '+images.length;}
-    function showImage(i){slideshow.style.opacity='0';setTimeout(()=>{slideshow.src=images[i];slideshow.style.opacity='1';updateCounter();
+      images.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+      });
 
-    // 3D next -> loop to slide 1
-    const next3D=document.getElementById('next3D');
-    next3D.addEventListener('click',()=>{
-      modelModal.style.display='none';
-      index=0;
-      showImage(index);
-    });},200);}
-
-    nextBtn.addEventListener('click',()=>{
-      index++;
-      if(index<images.length){showImage(index);}else{modelModal.style.display='flex';}
-    });
-
-    close3D.addEventListener('click',()=>{modelModal.style.display='none';index=images.length-1;showImage(index);});
-
-    updateCounter();
+      updateCounter();
+    })();
+  </script>
 </body>
 </html>
