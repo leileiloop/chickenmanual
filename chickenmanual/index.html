@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loading Chicken...</title>
+  <style>
+    body {
+      background-color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: "Arial", sans-serif;
+    }
+    img {
+      width: 220px;
+      height: auto;
+      animation: float 2s ease-in-out infinite;
+    }
+    p {
+      margin-top: 20px;
+      font-size: 1.3em;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+  </style>
+</head>
+<body>
+  <img src="g.gif" alt="Loading Chicken" />
+  <p>please wait 🐓</p>
+</body>
+</html>
