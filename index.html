@@ -3,192 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gallery + 3D Slideshow</title>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <title>Gallery - Slideshow</title>
   <style>
-    :root {
-      --btn-bg: rgba(0,0,0,0.5);
-      --btn-hover: rgba(255,255,255,0.15);
-    }
-    html, body {
+    :root{--btn-bg:rgba(0,0,0,0.5);--btn-hover:rgba(255,255,255,0.12)}
+    html,body{height:100%;}
+    body {
+      background-color: #111;
+      color: #fff;
       margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-      background: #000;
-      color: #fff;
       font-family: Arial, sans-serif;
-    }
-
-    /* Loader */
-    #loader {
-      position: fixed;
-      inset: 0;
-      background: #000;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 50;
-    }
-    #loader img { width: 200px; height: auto; }
-    #loader p { margin-top: 12px; color: #fff; font-size: 1.1rem; }
-
-    /* Slideshow */
-    #content {
-      display: none;
-      position: relative;
-      width: 100vw;
       height: 100vh;
       overflow: hidden;
     }
-    .image-container {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #000;
+
+    /* Loader styles */
+    #loader{
+      position:fixed;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      background:#000;
+      z-index:20;
     }
-    .image-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: opacity 0.3s ease, transform 0.3s ease;
+    #loader img{width:220px;height:auto;display:block}
+    #loader p{color:#fff;margin-top:16px;font-size:1.1rem}
+
+    /* Slideshow container */
+    #content{display:none;position:relative;width:100vw;height:100vh}
+    .image-container{
+      width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;
+    }
+    .image-container img{
+      width:100%;height:100%;object-fit:cover;transition:opacity 0.35s ease,transform 0.35s ease;opacity:1;
     }
 
-    /* Buttons */
-    .btn {
-      position: absolute;
-      background: var(--btn-bg);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 10px 16px;
-      font-size: 1rem;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      transition: background 0.2s ease, transform 0.1s ease;
-      z-index: 30;
+    /* Floating next button */
+    .nextFloating{
+      position:absolute;right:24px;bottom:24px;background:var(--btn-bg);border:none;color:#fff;padding:10px 16px;border-radius:10px;cursor:pointer;font-size:1rem;backdrop-filter:blur(6px);transition:background 0.18s ease,transform 0.12s ease;z-index:30
     }
-    .btn:hover { background: var(--btn-hover); transform: translateY(-2px); }
+    .nextFloating:hover{background:var(--btn-hover);transform:translateY(-2px)}
 
-    #nextBtn { bottom: 24px; right: 24px; }
-    #backBtn { top: 24px; left: 24px; }
+    /* Minimal accessibility focus */
+    .nextFloating:focus{outline:2px solid rgba(255,255,255,0.15)}
 
-    .counter {
-      position: absolute;
-      left: 24px;
-      bottom: 28px;
-      background: rgba(0, 0, 0, 0.35);
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-    }
-
-    /* 3D viewer */
-    #viewer {
-      display: none;
-      width: 100vw;
-      height: 100vh;
-      background: #000;
-      position: relative;
-    }
-    model-viewer {
-      width: 100%;
-      height: 100%;
-    }
-
-    @media (max-width: 768px) {
-      .btn { font-size: 0.9rem; padding: 8px 14px; }
-      .counter { font-size: 0.85rem; left: 16px; bottom: 20px; }
-    }
+    /* Small slide counter */
+    .counter{position:absolute;left:24px;bottom:28px;background:rgba(0,0,0,0.35);padding:6px 10px;border-radius:8px;font-size:0.95rem}
   </style>
 </head>
 <body>
-  <!-- Loader -->
+  <!-- Loader (shows first) -->
   <div id="loader">
-    <img src="g.gif" alt="Loading..." />
-    <p>Loading, please wait 🐓</p>
+    <img src="g.gif" alt="Loading Chicken"/>
+    <p>please wait 🐓</p>
   </div>
 
-  <!-- Slideshow -->
-  <div id="content">
+  <!-- Main content (hidden until loader finishes) -->
+  <div id="content" aria-hidden="true">
     <div class="image-container">
-      <img id="slideshow" src="1.png" alt="Slideshow image">
+      <img id="slideshow" src="1.png" alt="slideshow image">
     </div>
     <div class="counter" id="counter">1 / 8</div>
-    <button id="nextBtn" class="btn">Next ➜</button>
+    <button id="nextBtn" class="nextFloating" aria-label="Next slide">Next ➜</button>
+
+    <!-- 3D Modal -->
+    <div id="modelModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:40;align-items:center;justify-content:center;">
+      <div style="position:relative;width:90vw;height:80vh;background:#000;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+        <button id="close3D" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);border:none;color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer;z-index:50">✕</button>
+        <model-viewer id="glbViewer" src="9.glb" alt="3D Model" camera-controls auto-rotate style="width:100%;height:100%;background:#000;"></model-viewer>
+      </div>
+    </div>
   </div>
 
-  <!-- 3D Viewer -->
-  <div id="viewer">
-    <model-viewer id="model3d" src="9.glb" camera-controls auto-rotate ar></model-viewer>
-    <button id="backBtn" class="btn">⬅ Back to Slides</button>
-  </div>
+  <script src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <script>
-    window.addEventListener('load', () => {
-      const loader = document.getElementById('loader');
-      const content = document.getElementById('content');
-      setTimeout(() => {
-        loader.style.display = 'none';
-        content.style.display = 'block';
-      }, 3000);
-    });
-
-    const images = ['1.png','2.png','3.png','4.png','5.png','6.png','7.png','8.png'];
-    let index = 0;
-
-    const slideshow = document.getElementById('slideshow');
-    const nextBtn = document.getElementById('nextBtn');
-    const counter = document.getElementById('counter');
-    const viewer = document.getElementById('viewer');
-    const content = document.getElementById('content');
-    const backBtn = document.getElementById('backBtn');
-
-    function updateCounter() {
-      counter.textContent = (index + 1) + ' / ' + images.length;
-    }
-
-    function showImage(i) {
-      slideshow.style.opacity = '0';
-      setTimeout(() => {
-        slideshow.src = images[i];
-        slideshow.style.opacity = '1';
-        updateCounter();
-      }, 200);
-    }
-
-    nextBtn.addEventListener('click', () => {
-      index++;
-      if (index < images.length) {
-        showImage(index);
-      } else {
-        content.style.display = 'none';
-        viewer.style.display = 'block';
-      }
-    });
-
-    backBtn.addEventListener('click', () => {
-      viewer.style.display = 'none';
-      content.style.display = 'block';
-      index = images.length - 1;
-      showImage(index);
-    });
-
-    window.addEventListener('keydown', (e) => {
-      if (viewer.style.display === 'none') {
-        if (e.key === 'ArrowRight') nextBtn.click();
-        if (e.key === 'ArrowLeft') {
-          index = (index - 1 + images.length) % images.length;
-          showImage(index);
-        }
-      }
-    });
-
-    updateCounter();
-  </script>
 </body>
 </html>
