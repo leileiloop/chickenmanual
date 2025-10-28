@@ -45,22 +45,26 @@
   </style>
 </head>
 <body>
-  <div class="image-container">
-    <img id="slideshow" src="1.png" alt="slideshow">
+  <div id="loader" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;z-index:10;">
+    <img src="g.gif" alt="Loading Chicken" style="width:220px;height:auto;"/>
+    <p style="color:#fff;margin-top:20px;">please wait 🐓</p>
   </div>
-  <button id="nextBtn" class="nextFloating">Next ➜</button>
+  <div id="content" style="display:none;">
+    <div class="image-container">
+      <img id="slideshow" src="1.png" alt="slideshow">
+    </div>
+    <button id="nextBtn" class="nextFloating">Next ➜</button>
+  </div>
   <script>
-    const images = ["1.png","2.png","3.png","4.png","5.png","6.png","7.png","8.png"]; 
-    let index = 0;
-    const slideshow = document.getElementById('slideshow');
-    document.getElementById('nextBtn').addEventListener('click', () => {
-      slideshow.style.opacity = 0;
-      setTimeout(() => {
-        index = (index + 1) % images.length;
-        slideshow.src = images[index];
-        slideshow.style.opacity = 1;
-      }, 250);
+    window.addEventListener('load',()=>{
+      setTimeout(()=>{
+        document.getElementById('loader').style.display='none';
+        document.getElementById('content').style.display='block';
+      },2000);
     });
+    const images=["1.png","2.png","3.png","4.png","5.png","6.png","7.png","8.png"];let index=0;
+    const slideshow=document.getElementById('slideshow');
+    document.getElementById('nextBtn').addEventListener('click',()=>{slideshow.style.opacity=0;setTimeout(()=>{index=(index+1)%images.length;slideshow.src=images[index];slideshow.style.opacity=1;},250);});
   </script>
 </body>
 </html> id="nextBtn" class="nextFloating">Next ➜</button>
